@@ -1,0 +1,56 @@
+application:
+  name: "go-otp-auth"
+  version: "0.1.0"
+  debug: true
+  env: "development"
+  entropy_password: 80
+  graceful_shutdown_timeout: "10s"
+
+http_server:
+  host: "localhost"
+  port: 8000
+  timeout: "5s"
+
+mysql:
+  host: "go-otp-auth_mysqldb"
+  PORT: 3306
+  username: "admin"
+  password: "password123"
+  database: "go-otp-auth_db"
+  ssl_mode: disable
+  max_idle_conns: 15
+  max_open_conns: 100
+  conn_max_life_time: "5s"
+
+redis:
+  host: "go-otp-auth_redis"
+  port: 6379
+  password: "password123"
+  db: 0
+  dial_timeout: "5s"
+  read_timeout: "5s"
+  write_timeout: "5s"
+  pool_size: 10
+  pool_timeout: "15s"
+  idle_check_frequency: "2s"
+
+logger:
+  file_path: "./logs"
+  max_size: 10
+  max_backups: 10
+  max_age: 30
+  local_time: true
+  compress: true
+  console: true
+  file: false
+  enable_caller: true
+  enable_stack_trace: true
+  level: "debug"
+
+auth:
+  access_secret: "MYSECRETKEY"
+  refresh_secret: "MYSECRETKEY"
+  access_subject: "as"
+  refresh_subject: "rs"
+  access_token_expire_duration: "7h"
+  refresh_token_expire_duration: "120h"

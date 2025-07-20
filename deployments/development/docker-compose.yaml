@@ -1,0 +1,78 @@
+services:
+  ####################### APPLICATION ##################################################################################
+  app:
+    image: go-otp-auth_app:0.1.0-dev
+    build:
+      context: ../..
+      target: dev # For Development
+      dockerfile: deployments/development/Dockerfile
+    container_name: go-otp-auth_app-dev
+    ports:
+      - "${APP_HTTP_PORT}:${APP_HTTP_PORT}"
+      - "${APP_GRPC_PORT}:${APP_GRPC_PORT}"
+    volumes:
+      - ../../:/app # important (- ./:/app)
+    networks:
+      - go-otp-auth_network
+    restart: always
+    depends_on:
+      - mysqldb
+      - redis
+
+  ####################### SETUP-DB #####################################################################################
+  ######################## MYSQL ########################
+  mysqldb:
+    image: mysql:9.1.0
+    container_name: go-otp-auth_mysqldb
+    env_file:
+      - .env
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci' ]
+    ports:
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - go-otp-auth_network
+    restart: always
+
+  ####################### REDIS #######################
+  redis:
+    image: redis:7.4.1
+    container_name: go-otp-auth_redis
+    env_file:
+      - .env
+    #    command: redis-server --loglevel warning --save 60 1 --requirepass "password123"
+    command: redis-server --loglevel warning --save 60 1
+    volumes:
+      - redis:/var/lib/redis/data
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - go-otp-auth_network
+    restart: always
+  ####################### END SETUP-DB #################################################################################
+
+  ####################### SETUP-API GATEWAY ####################################################################################
+  nginx:
+    build:
+      context: .
+    image: nginx:1.27.3-alpine
+    container_name: go-otp-auth_nginx
+    ports:
+      - "${NGINX_HTTP_PORT}:${NGINX_HTTP_PORT}"
+    #      - "${NGINX_HTTPS_PORT}:${NGINX_HTTPS_PORT}"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - go-otp-auth_network
+    restart: always
+    depends_on:
+      - app
+
+volumes:
+  mysql:
+  redis:
+
+networks:
+  go-otp-auth_network:
+    driver: bridge
