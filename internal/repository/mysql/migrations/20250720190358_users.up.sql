@@ -1,0 +1,11 @@
+-- +migrate Up
+-- please read this article to understand why we use VARCHAR(191)
+-- https://www.grouparoo.com/blog/varchar-191#why-varchar-and-not-text
+CREATE TABLE `users`
+(
+    `id`         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `mobile`     VARCHAR(191)                        NOT NULL UNIQUE,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE (mobile)
+);

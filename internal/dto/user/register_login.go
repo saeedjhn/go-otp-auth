@@ -1,11 +1,11 @@
 package user
 
-type LoginRequest struct {
-	Mobile   string `json:"mobile"`
-	Password string `json:"password"`
+type RegisterOrLoginRequest struct {
+	Mobile string `json:"mobile" example:"09198829528"`
+	Code   string `json:"code" example:"12345"`
 }
 
-type LoginResponse struct {
+type RegisterOrLoginResponse struct {
 	UserInfo    Info              `json:"user"`
 	Tokens      Tokens            `json:"tokens"`
 	FieldErrors map[string]string `json:"field_errors,omitempty"`

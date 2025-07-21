@@ -1,0 +1,184 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server.",
+        "title": "go-otp-auth API",
+        "contact": {},
+        "version": "0.1.0"
+    },
+    "host": "localhost:80",
+    "basePath": "/",
+    "paths": {
+        "/v1/users/auth/register-or-login": {
+            "post": {
+                "description": "If the user does not exist, a new account will be created. If the user already exists,",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register or login a user",
+                "parameters": [
+                    {
+                        "description": "User credentials for register or login",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_dto_user.RegisterOrLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid input or binding error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Access denied",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Failed",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/send-otp": {
+            "post": {
+                "description": "This endpoint sends a one-time password (OTP) to the provided mobile number.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Send OTP to mobile",
+                "parameters": [
+                    {
+                        "description": "Mobile number to send OTP to",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_dto_user.SendOTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid input or binding error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Failed",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_saeedjhn_go-otp-auth_internal_dto_user.RegisterOrLoginRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "12345"
+                },
+                "mobile": {
+                    "type": "string",
+                    "example": "09198829528"
+                }
+            }
+        },
+        "github_com_saeedjhn_go-otp-auth_internal_dto_user.SendOTPRequest": {
+            "type": "object",
+            "properties": {
+                "mobile": {
+                    "type": "string",
+                    "example": "09198829528"
+                }
+            }
+        },
+        "github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "Success": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {}
+                },
+                "message": {
+                    "type": "string"
+                },
+                "meta": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "github_com_saeedjhn_go-otp-auth_internal_models.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "meta": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        }
+    }
+}

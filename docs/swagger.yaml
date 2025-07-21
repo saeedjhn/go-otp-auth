@@ -1,0 +1,125 @@
+basePath: /
+definitions:
+  github_com_saeedjhn_go-otp-auth_internal_dto_user.RegisterOrLoginRequest:
+    properties:
+      code:
+        example: "12345"
+        type: string
+      mobile:
+        example: "09198829528"
+        type: string
+    type: object
+  github_com_saeedjhn_go-otp-auth_internal_dto_user.SendOTPRequest:
+    properties:
+      mobile:
+        example: "09198829528"
+        type: string
+    type: object
+  github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse:
+    properties:
+      Success:
+        example: false
+        type: boolean
+      errors:
+        items: {}
+        type: array
+      message:
+        type: string
+      meta:
+        additionalProperties: true
+        type: object
+    type: object
+  github_com_saeedjhn_go-otp-auth_internal_models.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      meta:
+        additionalProperties: true
+        type: object
+      success:
+        example: true
+        type: boolean
+    type: object
+host: localhost:80
+info:
+  contact: {}
+  description: This is a sample server.
+  title: go-otp-auth API
+  version: 0.1.0
+paths:
+  /v1/users/auth/register-or-login:
+    post:
+      consumes:
+      - application/json
+      description: If the user does not exist, a new account will be created. If the
+        user already exists,
+      parameters:
+      - description: User credentials for register or login
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_dto_user.RegisterOrLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.SuccessResponse'
+        "400":
+          description: Bad Request - Invalid input or binding error
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse'
+        "403":
+          description: Forbidden - Access denied
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse'
+        "422":
+          description: Validation Failed
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse'
+      summary: Register or login a user
+      tags:
+      - Auth
+  /v1/users/send-otp:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint sends a one-time password (OTP) to the provided mobile
+        number.
+      parameters:
+      - description: Mobile number to send OTP to
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_dto_user.SendOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.SuccessResponse'
+        "400":
+          description: Bad Request - Invalid input or binding error
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse'
+        "422":
+          description: Validation Failed
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_saeedjhn_go-otp-auth_internal_models.ErrorResponse'
+      summary: Send OTP to mobile
+      tags:
+      - Users
+swagger: "2.0"

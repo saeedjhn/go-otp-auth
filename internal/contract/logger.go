@@ -1,5 +1,6 @@
 package contract
 
+//go:generate mockery --name Logger
 type Logger interface {
 	Info(args ...interface{})
 	Infof(msg string, args ...interface{})

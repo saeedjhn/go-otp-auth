@@ -22,8 +22,6 @@ type Service struct {
 	Config Config
 }
 
-// var _ userservice.AuthGenerator = (Service)(nil) // Commented, because it happens import cycle.
-
 func New(config Config) Service {
 	return Service{Config: config}
 }

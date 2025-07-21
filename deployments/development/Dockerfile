@@ -23,7 +23,7 @@ COPY . .
 RUN go build -o $BUILD_DIR/main /app/cmd/main.go
 
 # Install air
-RUN go install github.com/air-verse/air@latest
+RUN go install github.com/air-verse/air@v1.52.3
 
 # For Development
 FROM golang:1.23.2-alpine3.20 AS dev

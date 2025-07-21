@@ -8,7 +8,6 @@ import (
 
 func NewRedisClient(c redis.Config) (*redis.DB, error) {
 	db := redis.New(c)
-
 	if err := db.ConnectTo(); err != nil {
 		return nil, err
 	}

@@ -5,6 +5,5 @@ import (
 )
 
 type Authenticate struct {
-	ID   types.ID
-	Role string
+	ID types.ID
 }

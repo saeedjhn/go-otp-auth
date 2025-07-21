@@ -26,7 +26,7 @@ func New(conn *mysql.DB) DB {
 }
 
 func (r DB) Create(ctx context.Context, u models.User) (models.User, error) {
-	query := "INSERT INTO users (name, mobile, email, password) values(?, ?, ?, ?)"
+	query := "INSERT INTO users (mobile) values(?)"
 
 	stmt, err := r.conn.PrepareStatement( //nolint:sqlclosecheck // nothing
 		ctx, uint(mysqlrepo.StatementKeyUserCreate), query,
@@ -36,8 +36,7 @@ func (r DB) Create(ctx context.Context, u models.User) (models.User, error) {
 			WithMessage(msg.ErrMsgCantPrepareStatement).WithKind(richerror.KindStatusInternalServerError)
 	}
 
-	res, err := stmt.ExecContext(ctx, u.Name, u.Mobile, u.Email, u.Password)
-	// res, err := r.conn.Conn().Exec(query, u.Name, u.Mobile, u.Email, u.Password)
+	res, err := stmt.ExecContext(ctx, u.Mobile)
 	if err != nil {
 		return models.User{},
 			richerror.New(_opMysqlUserCreate).WithErr(err).
@@ -57,7 +56,7 @@ func (r DB) Create(ctx context.Context, u models.User) (models.User, error) {
 	return u, nil
 }
 
-func (r DB) IsExistsByMobile(ctx context.Context, mobile string) (bool, error) { //nolint:dupl // nothing
+func (r DB) ExistsByMobile(ctx context.Context, mobile string) (bool, error) {
 	var exists bool
 
 	query := "select exists(select 1 from users where mobile = ?)"
@@ -71,7 +70,6 @@ func (r DB) IsExistsByMobile(ctx context.Context, mobile string) (bool, error) {
 	}
 
 	err = stmt.QueryRowContext(ctx, mobile).Scan(&exists)
-	// err := r.conn.Conn().QueryRow(query, mobile).Scan(&exists)
 	if err != nil {
 		return false,
 			richerror.New(_opMysqlUserIsExistsByMobile).WithErr(err).
@@ -86,39 +84,9 @@ func (r DB) IsExistsByMobile(ctx context.Context, mobile string) (bool, error) {
 	return false, nil
 }
 
-func (r DB) IsExistsByEmail(ctx context.Context, email string) (bool, error) { //nolint:dupl // nothing
-	var exists bool
-
-	query := "select exists(select 1 from users where email = ?)"
-
-	stmt, err := r.conn.PrepareStatement( //nolint:sqlclosecheck // nothing
-		ctx, uint(mysqlrepo.StatementKeyUserIsExistsByEmail), query,
-	)
-	if err != nil {
-		return false, richerror.New(_opMysqlUserIsExistsByEmail).WithErr(err).
-			WithMessage(msg.ErrMsgCantPrepareStatement).WithKind(richerror.KindStatusInternalServerError)
-	}
-
-	err = stmt.QueryRowContext(ctx, email).Scan(&exists)
-	// err := r.conn.Conn().QueryRow(query, mobile).Scan(&exists)
-	if err != nil {
-		return false,
-			richerror.New(_opMysqlUserIsExistsByEmail).WithErr(err).
-				WithMessage(msg.ErrorMsg500InternalServerError).
-				WithKind(richerror.KindStatusInternalServerError)
-	}
-
-	if exists {
-		return true, nil
-	}
-
-	return false, nil
-}
-
 func (r DB) GetByMobile(ctx context.Context, mobile string) (models.User, error) {
 	query := "SELECT * FROM users WHERE mobile = ?"
 
-	// row := r.conn.Conn().QueryRow(query, mobile)
 	stmt, err := r.conn.PrepareStatement( //nolint:sqlclosecheck // nothing
 		ctx, uint(mysqlrepo.StatementKeyUserGetByMobile), query,
 	)
@@ -132,41 +100,12 @@ func (r DB) GetByMobile(ctx context.Context, mobile string) (models.User, error)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return models.User{}, richerror.New(_opMysqlUserGetByMobile).WithErr(err).
-				WithMessage(errMsgDBRecordNotFound).
+				WithMessage(msg.ErrMsgDBRecordNotFound).
 				WithKind(richerror.KindStatusNotFound)
 		}
 
 		return models.User{}, richerror.New(_opMysqlUserGetByMobile).WithErr(err).
-			WithMessage(errMsgDBCantScanQueryResult).
-			WithKind(richerror.KindStatusInternalServerError)
-	}
-
-	return user, nil
-}
-
-func (r DB) GetByID(ctx context.Context, id uint64) (models.User, error) {
-	query := "SELECT * FROM users WHERE id = ?"
-
-	// row := r.conn.Conn().QueryRow(query, id)
-	stmt, err := r.conn.PrepareStatement( //nolint:sqlclosecheck // nothing
-		ctx, uint(mysqlrepo.StatementKeyUserGetByID), query,
-	)
-	if err != nil {
-		return models.User{}, richerror.New(_opMysqlUserGetByID).WithErr(err).
-			WithMessage(msg.ErrMsgCantPrepareStatement).WithKind(richerror.KindStatusInternalServerError)
-	}
-
-	row := stmt.QueryRowContext(ctx, id)
-	user, err := scanUser(row)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return models.User{}, richerror.New(_opMysqlUserGetByID).WithErr(err).
-				WithMessage(errMsgDBRecordNotFound).
-				WithKind(richerror.KindStatusNotFound)
-		}
-
-		return models.User{}, richerror.New(_opMysqlUserGetByID).WithErr(err).
-			WithMessage(errMsgDBCantScanQueryResult).
+			WithMessage(msg.ErrMsgDBCantScanQueryResult).
 			WithKind(richerror.KindStatusInternalServerError)
 	}
 
@@ -176,7 +115,7 @@ func (r DB) GetByID(ctx context.Context, id uint64) (models.User, error) {
 func scanUser(scanner Scanner) (models.User, error) {
 	var user models.User
 
-	err := scanner.Scan(&user.ID, &user.Name, &user.Mobile, &user.Email, &user.Password, &user.CreatedAt, &user.UpdatedAt)
+	err := scanner.Scan(&user.ID, &user.Mobile, &user.CreatedAt, &user.UpdatedAt)
 
 	// Convert something...
 

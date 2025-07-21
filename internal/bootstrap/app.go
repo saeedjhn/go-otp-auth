@@ -10,11 +10,10 @@ import (
 )
 
 type Application struct {
-	Config  *configs.Config
-	Logger  contract.Logger
-	Redis   *redis.DB
-	MySQL   *mysql.DB
-	Service *Service
+	Config *configs.Config
+	Logger contract.Logger
+	Redis  *redis.DB
+	MySQL  *mysql.DB
 }
 
 func App(config *configs.Config) (*Application, error) {
@@ -39,11 +38,6 @@ func (a *Application) setup() error {
 	if a.Redis, err = NewRedisClient(a.Config.Redis); err != nil {
 		return err
 	}
-
-	a.Service = NewService(
-		a.Config,
-		a.MySQL,
-	)
 
 	return nil
 }

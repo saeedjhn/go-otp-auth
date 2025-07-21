@@ -1,3 +1,8 @@
+// @title           go-otp-auth API
+// @version         0.1.0
+// @description     This is a sample server.
+// @host            localhost:80
+// @BasePath        /
 package main
 
 import (

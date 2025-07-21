@@ -3,7 +3,6 @@ application:
   version: "0.1.0"
   debug: true
   env: "development"
-  entropy_password: 80
   graceful_shutdown_timeout: "10s"
 
 http_server:

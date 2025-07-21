@@ -1,13 +1,14 @@
-package user //nolint:dupl // 1-79 lines are duplicate
+package user
 
 import (
 	"net/http"
+
+	userdto "github.com/saeedjhn/go-otp-auth/internal/dto/user"
 
 	"github.com/labstack/echo/v4"
 
 	"github.com/saeedjhn/go-otp-auth/internal/models"
 
-	"github.com/saeedjhn/go-otp-auth/internal/dto/user"
 	"github.com/saeedjhn/go-otp-auth/pkg/bind"
 	"github.com/saeedjhn/go-otp-auth/pkg/msg"
 
@@ -15,8 +16,21 @@ import (
 	"github.com/saeedjhn/go-otp-auth/pkg/richerror"
 )
 
-func (h Handler) Register(c echo.Context) error {
-	req := user.RegisterRequest{}
+// SendOTP godoc.
+// @Summary Send OTP to mobile
+// @Description This endpoint sends a one-time password (OTP) to the provided mobile number.
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param Request body userdto.SendOTPRequest true "Mobile number to send OTP to"
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse "Bad Request - Invalid input or binding error"
+// @Failure 422 {object} models.ErrorResponse "Validation Failed"
+// @Failure 500 {object} models.ErrorResponse "Internal Server Error"
+// @Router /v1/users/send-otp [post]
+func (h Handler) SendOTP(c echo.Context) error {
+	req := userdto.SendOTPRequest{}
+
 	if err := c.Bind(&req); err != nil {
 		return echo.NewHTTPError(
 			http.StatusBadRequest,
@@ -25,7 +39,7 @@ func (h Handler) Register(c echo.Context) error {
 		)
 	}
 
-	resp, err := h.userSvc.Register(c.Request().Context(), req)
+	resp, err := h.userSvc.SendOTP(c.Request().Context(), req)
 	if err != nil {
 		richErr := richerror.Analysis(err)
 		code := httpstatus.MapkindToHTTPStatusCode(richErr.Kind())
@@ -43,5 +57,5 @@ func (h Handler) Register(c echo.Context) error {
 		)
 	}
 
-	return c.JSON(http.StatusOK, models.NewSuccessResponse(msg.MsgRegister, resp))
+	return c.JSON(http.StatusOK, models.NewSuccessResponse(msg.MsgOTPGenerated, resp))
 }

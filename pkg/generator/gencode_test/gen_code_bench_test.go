@@ -3,7 +3,7 @@ package gencode_test
 import (
 	"testing"
 
-	"github.com/saeedjhn/go-otp-auth/pkg/gencode"
+	"github.com/saeedjhn/go-otp-auth/pkg/generator"
 )
 
 //go:generate go test -v -race -count=1 -bench=. -benchmem -run BenchmarkGenCode
@@ -13,7 +13,7 @@ func BenchmarkGenCode_SmallLength(b *testing.B) {
 	length := 10
 
 	for range b.N {
-		_, _ = gencode.GenCode(length, chars)
+		_, _ = generator.GenCode(length, chars)
 	}
 }
 
@@ -22,7 +22,7 @@ func BenchmarkGenCode_MediumLength(b *testing.B) {
 	length := 100
 
 	for range b.N {
-		_, _ = gencode.GenCode(length, chars)
+		_, _ = generator.GenCode(length, chars)
 	}
 }
 
@@ -31,6 +31,6 @@ func BenchmarkGenCode_LargeLength(b *testing.B) {
 	length := 1000
 
 	for range b.N {
-		_, _ = gencode.GenCode(length, chars)
+		_, _ = generator.GenCode(length, chars)
 	}
 }

@@ -3,16 +3,13 @@ package msg
 const (
 	ErrMsgSomethingWentWrong   = "something went wrong"
 	ErrMsgCantPrepareStatement = "failed to prepare SQL statement"
-	IncorrectPassword          = "the password is incorrect"
+	ErrMsgMobileIsNotValid     = "mobile is not valid"
+	ErrMsgInvalidInput         = "invalid input"
+	ErrMsgOTPCodeIsNotValid    = "code is not valid"
 
-	MsgLoggedIn    = "You have logged in successfully"
-	MsgRegister    = "Registration completed successfully"
-	MsgProfileSeen = "Your profile information has been retrieved"
+	ErrMsgDBRecordNotFound      = "record not found"
+	ErrMsgDBCantScanQueryResult = "can't scan query result"
 
-	MsgCreated = "New resource created successfully"
-	MsgRead    = "Requested resource loaded successfully"
-	MsgUpdate  = "The resource has been updated successfully"
-	MsgDelete  = "The resource has been deleted successfully"
-
-	MsgRefreshTokenRecreated = "Your session has been extended"
+	MsgOTPGenerated           = "OTP generated successfully"
+	MsgRegisterOrLoginSuccess = "Register or login successful"
 )
